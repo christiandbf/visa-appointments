@@ -1,0 +1,24 @@
+{
+  "name": "visa-appointment",
+  "version": "1.0.0",
+  "description": "Automated script to check Spanish visa appointments for Colombian",
+  "main": "app.js",
+  "author": "Christian Barrios",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "deploy:dev": "serverless deploy",
+    "deploy:test": "serverless deploy --stage test",
+    "deploy:prod": "serverless deploy --stage prod"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1165.0",
+    "playwright-aws-lambda": "^0.8.0",
+    "playwright-core": "^1.23.1",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.20.1"
+  }
+}

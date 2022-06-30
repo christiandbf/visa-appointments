@@ -1,0 +1,52 @@
+service: VisaAppointments
+
+frameworkVersion: '3'
+
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  iam:
+    role:
+      name: VisaAppointmentsRole
+      statements:
+        - Effect: "Allow"
+          Action:
+            - sns:Publish
+          Resource: "*"
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:PutObjectAcl
+          Resource: arn:aws:s3::*:*
+
+
+functions:
+  appointments:
+    name: ${self:service}-${self:provider.stage}-Appointments
+    handler: handler.run
+    description: Scrape websites for information
+    memorySize: 1024
+    timeout: 300
+    package:
+      patterns:
+        - handler.js
+        - node_modules
+        - package.json
+    environment:
+      NODE_ENV: ${file(env.yml):${self:provider.stage}.NODE_ENV}
+      URL: ${file(env.yml):${self:provider.stage}.URL}
+      PHONE_NUMBERS: ${file(env.yml):${self:provider.stage}.PHONE_NUMBERS}
+      S3_BUCKET: !Ref ScreenshotsBucket
+    events:
+      - schedule: rate(1 hour)
+
+resources:
+  Resources:
+    ScreenshotsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: visa-appointments-${self:provider.stage}-screenshots
+        AccessControl: Private
